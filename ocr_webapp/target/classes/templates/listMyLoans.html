@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Récupération du head commun-->
+    <div th:replace="fragment/common :: head">head</div>
+    <title>Liste de mes prêts</title>
+</head>
+<body>
+<!-- Récupération du fragment en tête -->
+<div th:replace="fragment/common :: header"> En tête</div>
+
+<div class="container container-fluid mt-3">
+
+    <div th:if="${myLoans} != null">
+        <div class="container col my-2">
+            <h2 class="text-primary text-center my-4">Vos emprunts en cours</h2>
+
+            <table class="table table-striped alert-primary">
+                <thead>
+                <tr>
+                    <th>Date d'emprunt</th>
+                    <th>Livre emprunté</th>
+                    <th>Prolongation de l'emprunt</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="loan : ${myLoans}" th:if="${loan.getBookBackDate()} == null">
+
+                    <td th:text="${#temporals.format(loan.getStartingDate() , 'dd-MM-yyyy')}">date d'emprunt</td>
+                    <td th:text="${loan.getTitle()}">Titre emprunté</td>
+                    <td>
+                        <span th:if="${loan.getRefreshEndingCounter()== 0 && loan.getBookBackDate()== null}">
+                            <button class="btn btn-primary">
+                                <a class="text-white" href="#" th:href="@{'/loan/' + ${loan.getId()} + '/extend'}">Prolonger </a>
+                            </button>
+                        </span>
+                        <span class="text-danger" th:if="${loan.getRefreshEndingCounter() > 0 && loan.getBookBackDate()== null}" th:text="'Emprunt prolongé'">
+                            Emprunt prolongé
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="container col">
+            <h2 class="text-primary text-center my-4">Historique de vos emprunts rendus</h2>
+
+            <table class="table table-striped alert-primary">
+                <thead>
+                <tr>
+                    <th>Date d'emprunt</th>
+                    <th>Date de retour</th>
+                    <th>Livre emprunté</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="loan : ${myLoans}" th:if="${loan.getBookBackDate()} != null">
+
+                    <td th:text="${#temporals.format(loan.getStartingDate() , 'dd-MM-yyyy')}">date d'emprunt</td>
+                    <td th:text="${#temporals.format(loan.getBookBackDate() , 'dd-MM-yyyy')}">Retour livre</td>
+                    <td th:text="${loan.getTitle()}">titre</td>
+                    <td th:if="${loan.getRefreshEndingCounter()== 0 && loan.getBookBackDate()== null}">
+                        <a href="#" th:href="@{'/loan/' + ${loan.getId()} + '/extend'}">patch </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Récupération du pied de page et des scripts -->
+<div th:replace="fragment/common :: footer "> Pied</div>
+</body>
+</html>

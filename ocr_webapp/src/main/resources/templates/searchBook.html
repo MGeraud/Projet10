@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Récupération du head commun-->
+    <div th:replace="fragment/common :: head"> Head</div>
+    <title>Recherche de livres</title>
+</head>
+<body>
+<!-- Navbar et image bandeau -->
+<div th:replace="fragment/common :: header"> En tête</div>
+<div class="container container-fluid">
+    <!-- formulaire de recherche -->
+    <div th:replace="fragment/searchForm"> Formulaire</div>
+
+    <!-- Resultat de recherche -->
+    <div th:if="${entities} != null">
+        <div th:replace="fragment/foundBook">Résultats</div>
+    </div>
+</div>
+<!-- Récupération du pied de page et des scripts -->
+<div th:insert="fragment/common :: footer"> Pied de page</div>
+</body>
+
+</html>

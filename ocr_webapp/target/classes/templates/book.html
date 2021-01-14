@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Récupération du head commun-->
+    <div th:replace="fragment/common :: head">head</div>
+    <title>Livre</title>
+</head>
+<body>
+<!-- Récupération du fragment en tête -->
+<div th:replace="fragment/common :: header"> En tête</div>
+
+<!-- image à gauche sur écran tablette et + -->
+<div class="container float-md-left col-md-3 text-center">
+    <img class=" my-2" src="#" th:src="@{${book.getImage()}}">
+</div>
+<!-- Détails à droite sur écrans tablette et +-->
+<div class="container float-md-right col-md-9">
+    <div class="m-md-3">
+        <p>
+        <h1 th:text="${book.getTitle()}">titre</h1>
+        <p th:text="${book.getDescription()}">description</p>
+        <p>
+            <span class=" text-primary" th:text="'Auteur(s) : '"> auteur</span>
+            <span class="col-3" th:each="author : ${book.getAuthors()}">
+        <span th:text="${author.getFirstname()} + ' ' + ${author.getLastname()}">nom</span>
+    </span>
+        </p>
+        <p class="row">
+        <span class="col">
+            <span class="text-primary" th:text="'Editions : ' "> Editeur</span>
+            <span th:text="${book.getPublisher().getName()}">nom éditeur</span>
+        </span>
+            <span class="col">
+            <span class="text-primary" th:text="'Année : '"> Année</span>
+            <span th:text="${book.getYear()}"> an</span>
+        </span>
+        </p>
+    </div>
+    <!-- Carte pour chacun des exemplaire du livre : où le trouver et disponibilité -->
+    <div class="card-deck">
+    <div  th:each="label : ${book.getStocks()}">
+        <div class="card border-success my-2">
+            <div class="card-header">
+                <div class="card-title text-primary" th:text="'Bibliothèque : ' + ${label.getPk().getLibrary().getLibrary_name()}">Bibliotheque</div>
+                <p th:text="${label.getPk().getLibrary().getAddress()}">adresse</p>
+                <p th:text="'Horaires du lundi au vendredi :'">heures ouvertures</p>
+                <p th:text="${label.getPk().getLibrary().getOpening_hours()}">xx-xx</p>
+            </div>
+            <div class="card-body">
+                <span class="title text-primary" th:text="'Où me chercher : '">lieu </span><br/>
+                <span th:text="'Allée : ' + ${label.getWings()}">allée</span><br/>
+                <span th:text="'Colonne : ' + ${label.getPillar()}">colonne</span><br/>
+                <span th:text="'Etagère : ' + ${label.getShelf()}">etagere</span><br/>
+                <span th:text="'Référence : ' + ${label.getLabel()}">reference</span><br/>
+            </div>
+            <div class="card-footer">
+                <p class="title text-primary" th:text="'Disponbilité : '">Dispo ?</p>
+                <p th:each="dispo : ${available}">
+                <span th:if="${label.getLabel().equals(dispo.getKey()) }">
+                    <span class="alert-success" th:if="${dispo.getValue().equals('true')}"> Exemplaire disponible</span>
+                    <span class="alert-danger" th:unless="${dispo.getValue().equals('true')}">Exemplaire non disponible</span>
+                </span>
+                </p>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Récupération du pied de page et des scripts-->
+<div class="row align-bottom col-12 justify-content-center">
+    <div th:replace="fragment/common :: footer "> Pied</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- couches commune aux différentes pages : NavBar , image bandeau et pied de page -->
+<!-- Fragment pour le header , permet de récupérer bootstrap4-->
+<div th:fragment="head">
+    <meta charset="UTF-8">
+    <!-- bootstrap4 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</div>
+<body>
+<!-- Fragment pour les en tête-->
+<div class="container-fluid " th:fragment="header">
+    <!-- NavBar responsive via bootstrap 4 , affichage menu burger pour les liens en petit écran-->
+    <nav class="navbar navbar-expand-md navbar-light  float-md-right">
+        <a class="navbar-brand" href="#" th:href="@{/index}"><strong>Bibliothèques d'OCR</strong></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ">
+                <li class="nav-item active m-1">
+                    <a type="button" class=" btn btn-success" href="#" th:href="@{/index}" >Accueil</a>
+                </li>
+                <li class="nav-item m-1">
+                    <a type="button" class=" btn btn-success" href="#" th:href="@{/search}">Nos livres</a>
+                </li>
+                <li class="nav-item m-1">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#formForLoans">
+                        Mes emprunts
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="formForLoans" tabindex="-1" role="dialog" aria-labelledby="Identifiants" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="Identifiants">Vos identifiants</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-group mx-5  " action="#" th:action="@{/myLoans}" th:object="${identifiants}" method="post">
+                                        <label class="col-form-label mx-md-3 my-1" th:text=" Email"></label>
+                                        <input class="form-control mx-md-3 my-1" type="text" th:field="*{email}"/>
+                                        <label class="col-form-label mx-md-3 my-1" th:text="' Carte n° : '"></label>
+                                        <input class="form-control mx-md-3 my-1" type="text" th:field="*{cardnumber}"/>
+                                        <input class="btn btn-info mx-md-3 my-2" type="submit" value="Envoyer">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- image bandeau de présentation situé sous la navBar-->
+    <img src="#" th:src="@{/resources/images/bandeau.png}" class="img-fluid">
+</div>
+<!-- Fragment pour les pieds de page comprenant aussi les scripts nécessaires à bootstrap 4-->
+<div  th:fragment="footer">
+    <div class="container-fluid border-top border-dark mt-5 ">
+        <p class="text-center">Site créé par la Direction du Système d'Information de la ville d'OCR </p>
+    </div>
+
+    <!-- jquery, popper et bootstrap4.js pour bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
+</div>
+</body>
+</html>

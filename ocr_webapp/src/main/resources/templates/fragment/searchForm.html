@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recherche de livre</title>
+</head>
+<body>
+<!-- Formulaire de recherche comprenant 2 champs : un champ SELECT pour le type de recherche et un champ INPUT pour l'entrée à rechercher-->
+<div class="title h2 text-center mt-2 text-primary" th:text="'Veuillez choisir vos critères de recherche'"></div>
+<div class="row justify-content-around mt-md-2 ">
+    <form class="form-group form-inline mx-5  " action="#" th:action="@{/foundBook}" th:object="${searchBookParameters}" method="post">
+        <label class="col-form-label mx-md-3 " th:text="'Catégorie : '"></label>
+        <select class="form-control mx-md-3 " th:field="*{searchType}">
+            <option th:value="author" th:text="Auteur">Par auteur</option>
+            <option th:value="title" th:text="Titre">Par titre</option>
+            <option th:value="topic" th:text="Sujet">Par sujet</option>
+        </select>
+        <label class="col-form-label mx-md-3 my-1" th:text="' Rechercher : '"></label>
+        <input class="form-control mx-md-3 my-1" type="text" th:field="*{searchInput}"/>
+        <input class="btn btn-info mx-md-3 my-1" type="submit" value="Envoyer">
+    </form>
+</div>
+</body>
+</html>

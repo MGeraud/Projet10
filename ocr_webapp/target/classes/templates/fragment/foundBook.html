@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Résultats de recherche</title>
+</head>
+<body>
+<!-- Affichage des résultats de la recherche de livre s'il y a des résultats-->
+<div class="container container-fluid">
+    <div th:if="${entities.getContent().page.totalElements} != 0">
+        <div class="card border-success my-3" th:each="book : ${entities.getContent()._embedded.bookList}">
+            <div class="card-body row">
+
+                <h3 class="card-title col-8" th:text="${book.title}">Titre du livre</h3>
+
+                <h5 class="card-title col" th:text="'Editions : ' + ${book.publisher.name}">Editeur</h5>
+
+            </div>
+            <div class="card-footer ">
+                <span class="row">
+                <h5 class="card-title col-8">Auteur(s) : </h5>
+                <span class="card-title col" th:text="'Année : ' + ${book.year}">Titre année</span>
+                </span>
+                <span th:each="author : ${book.authors}">
+                    <span class="col-3" th:text="${author.firstname} + ' ' + ${author.lastname}">auteur</span>
+                </span>
+            </div>
+            <!-- Bouton de redirection vers les détails du livre avec plage étendue à toute la carte du livre -->
+            <form action="#" th:action="@{/book}">
+                <button class="btn btn-success stretched-link m-2 " type="submit" th:name="urlLink"
+                        th:value="${book._links.self.href}">Voir détails et disponibilités
+                </button>
+            </form>
+        </div>
+
+
+        <!-- Gestion de la pagination avec les différents liens hypermédias récupérés -->
+        <div class="row justify-content-center">
+            <ul class="pagination ">
+                <li class="page-item ml-3" th:if="${entities.getContent().page.number} > 0 ">
+                    <form action="#" th:action="@{/refreshBook}">
+
+
+                        <button class="btn btn-info" type="submit" th:name="refresh"
+                                th:value="${entities.getLink('prev').get().href}"> Page précédente
+                        </button>
+                    </form>
+                </li>
+                <li class="page-item mx-3 my-auto"
+                    th:text="'Page ' + (${entities.getContent().page.number} + 1) + ' sur ' + ${entities.getContent().page.totalPages}"></li>
+                <li class="page-item mr-3"
+                    th:if="${entities.getContent().page.number} < ( ${entities.getContent().page.totalPages} - 1 ) ">
+                    <form action="#" th:action="@{/refreshBook}">
+
+
+                        <button class="btn btn-info" type="submit" th:name="refresh"
+                                th:value="${entities.getLink('next').get().href}"> Page suivante
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div th:if="${entities.getContent().page.totalElements} == 0">
+    <h3 class="text-primary text-center">Pas de résultat pour cette recherche , essayez avec d'autres
+        critères</h3>
+</div>
+</body>
+</html>

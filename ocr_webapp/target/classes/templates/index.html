@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Récupération du head commun-->
+    <div th:replace="fragment/common :: head">head</div>
+    <title>Accueil</title>
+</head>
+<body>
+<!-- Récupération du fragment en tête -->
+<div th:replace="fragment/common :: header"> En tête</div>
+
+<!-- Décoration de la page d'accueil par les derniers livres acquis par les bibliothèques -->
+<h2 class="text-center my-5"><strong th:text="'Les derniers livres acquis par nos bibiothèques'">Les livres</strong>
+</h2>
+
+
+    <div class="card-deck">
+        <div class="card border-success my-2 " th:each="newBook : ${books.getContent()._embedded.bookList}">
+            <div class="card-body ">
+                <img class="card-img h-100 " th:src="@{${newBook.image}}">
+            </div>
+            <div class="card-footer">
+                <h4 class="card-title" th:text="${newBook.title}">Titre du livre</h4>
+
+                <!-- Bouton de redirection vers les détails du livre avec plage étendue à toute la carte du livre -->
+                <form action="#" th:action="@{/book}">
+                    <button class="btn btn-success stretched-link m-2 " type="submit" th:name="urlLink"
+                            th:value="${newBook._links.self.href}">Découvrir !
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Récupération du pied de page et des scripts -->
+    <div th:replace="fragment/common :: footer "> Pied</div>
+
+</body>
+</html>
