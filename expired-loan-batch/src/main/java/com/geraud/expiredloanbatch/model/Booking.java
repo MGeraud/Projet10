@@ -19,7 +19,7 @@ public class Booking {
 
     private LocalDate bookingDate;
     private LocalDate mailSendDate;
-    private String label;
+    private String title;
 
     @ManyToOne
     private Member member;

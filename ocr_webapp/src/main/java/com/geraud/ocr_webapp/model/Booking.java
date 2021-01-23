@@ -13,7 +13,7 @@ public class Booking {
 
     private LocalDate bookingDate;
     private LocalDate mailSendDate;
-    private String label;
+    private String title;
 
     private Member member;
 }
