@@ -24,4 +24,7 @@ public class Member {
     @JsonIgnore
     private Set<Loan> loans =new HashSet<>();
 
+    @OneToMany(mappedBy = "member")
+    @JsonIgnore
+    private Set<Booking> bookingSet =new HashSet<>();
 }
