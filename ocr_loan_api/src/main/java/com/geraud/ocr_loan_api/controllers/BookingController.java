@@ -1,11 +1,12 @@
 package com.geraud.ocr_loan_api.controllers;
 
 import com.geraud.ocr_loan_api.domain.Booking;
+import com.geraud.ocr_loan_api.exceptions.FunctionnalException;
 import com.geraud.ocr_loan_api.services.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,5 +31,10 @@ public class BookingController {
     @GetMapping("/booking/title")
     public List<Booking> bookingsWithTitle(@RequestParam("title") String title){
         return bookingService.listBookingWithTitle(title);
+    }
+
+    @PostMapping("/booking")
+    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) throws FunctionnalException {
+        return new ResponseEntity<Booking>(bookingService.createBooking(booking) , HttpStatus.OK);
     }
 }
