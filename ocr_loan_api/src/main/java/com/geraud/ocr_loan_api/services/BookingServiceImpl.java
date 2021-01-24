@@ -4,11 +4,13 @@ import com.geraud.ocr_loan_api.dao.BookingDao;
 import com.geraud.ocr_loan_api.domain.Booking;
 import com.geraud.ocr_loan_api.domain.Member;
 import com.geraud.ocr_loan_api.exceptions.FunctionnalException;
+import com.geraud.ocr_loan_api.exceptions.LoanNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingServiceImpl implements BookingService{
@@ -65,6 +67,24 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public void deleteBooking(Long id) {
         bookingDao.deleteById(id);
+    }
+
+    /**
+     * annote la date d'envoi de mail
+     * @param id de la réservation pour laquelle le mailest envoyé
+     * @return la réservation modifiée
+     */
+    @Override
+    public Booking patchBooking(Long id) {
+        Optional<Booking> optionalToUpdate = bookingDao.findById(id);
+        if (!optionalToUpdate.isPresent()){
+            throw new LoanNotFoundException("Réservation non trouvée avec l'id : " + id);
+        }
+        Booking bookingToUpdate = optionalToUpdate.get();
+        bookingToUpdate.setMailSendDate(LocalDate.now());
+        bookingDao.save(bookingToUpdate);
+
+        return bookingToUpdate;
     }
 
     /**

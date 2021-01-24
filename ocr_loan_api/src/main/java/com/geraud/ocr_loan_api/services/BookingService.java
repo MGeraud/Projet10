@@ -13,4 +13,6 @@ public interface BookingService {
     Booking createBooking(Booking booking) throws FunctionnalException;
 
     void deleteBooking(Long id);
+
+    Booking patchBooking(Long id);
 }

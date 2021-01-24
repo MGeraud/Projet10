@@ -46,4 +46,9 @@ public class BookingController {
         bookingService.deleteBooking(id);
         return new ResponseEntity<Long>(id , HttpStatus.OK);
     }
+
+    @GetMapping("/booking/{id}/emailing")
+    public ResponseEntity<Booking> patchBooking(@PathVariable Long id){
+        return new ResponseEntity<Booking>(bookingService.patchBooking(id) , HttpStatus.OK);
+    }
 }
