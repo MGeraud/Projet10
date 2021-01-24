@@ -33,8 +33,17 @@ public class BookingController {
         return bookingService.listBookingWithTitle(title);
     }
 
+    /**
+     * Création d'une réservation
+     */
     @PostMapping("/booking")
     public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) throws FunctionnalException {
         return new ResponseEntity<Booking>(bookingService.createBooking(booking) , HttpStatus.OK);
+    }
+
+    @DeleteMapping("/booking/{id}")
+    public ResponseEntity<Long> deleteBooking(@PathVariable Long id){
+        bookingService.deleteBooking(id);
+        return new ResponseEntity<Long>(id , HttpStatus.OK);
     }
 }

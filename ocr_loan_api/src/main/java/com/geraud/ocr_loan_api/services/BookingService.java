@@ -11,4 +11,6 @@ public interface BookingService {
     List<Booking> listBookingWithTitle (String title);
 
     Booking createBooking(Booking booking) throws FunctionnalException;
+
+    void deleteBooking(Long id);
 }

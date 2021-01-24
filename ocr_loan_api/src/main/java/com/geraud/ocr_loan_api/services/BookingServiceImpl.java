@@ -59,6 +59,15 @@ public class BookingServiceImpl implements BookingService{
     }
 
     /**
+     * Effacer une réservation
+     * @param id de la réserveation à effacer
+     */
+    @Override
+    public void deleteBooking(Long id) {
+        bookingDao.deleteById(id);
+    }
+
+    /**
      * vérifier si l'utilisateur  n'a pas déjà réservé ce titre
      * @param booking réservation en attente d'enregistrement
      * @throws FunctionnalException si livre déjà réservé par cet utilisateur
