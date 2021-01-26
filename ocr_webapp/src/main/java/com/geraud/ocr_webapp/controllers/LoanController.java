@@ -2,6 +2,7 @@ package com.geraud.ocr_webapp.controllers;
 
 import com.geraud.ocr_webapp.model.Booking;
 import com.geraud.ocr_webapp.model.Loan;
+import com.geraud.ocr_webapp.service.CallLoanApi;
 import com.geraud.ocr_webapp.utils.Login;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public class LoanController {
 
-    @Value("${base.url.loan}")
-    private String loanUrl;
-    @Value("${base.url.booking}")
-    private String bookingUrl;
     @Autowired
-    RestTemplate restTemplate;
+    CallLoanApi callLoanApi;
 
     /**
      * Liste les livres empruntés
@@ -35,26 +32,9 @@ public class LoanController {
     @RequestMapping("/myLoans")
     public String listLoanFromMember(@ModelAttribute("identifiants")Login login,
                                      Model model){
-
-        //création de l'url à appeler à partir des critères de recherche récupérés (email et carte membre)
-        //pour appel des prêts de l'utilisateur
-        String url = UriComponentsBuilder.fromHttpUrl(loanUrl)
-                .queryParam("email" , login.getEmail())
-                .queryParam("cardnumber", login.getCardnumber())
-                .toUriString();
-        //création de l'url à appeler à partir des critères de recherche récupérés (email et carte membre)
-        //pour appel des réservations de l'utilisateur
-        String bookingsUrl = UriComponentsBuilder.fromHttpUrl(bookingUrl + "member")
-                .queryParam("email" , login.getEmail())
-                .queryParam("cardnumber", login.getCardnumber())
-                .toUriString();
         try {
-            // appel l'API gérant les emprunts puis récupération des livres emprunté sous forme de tableau
-            ResponseEntity<Loan[]> response = restTemplate.getForEntity(url, Loan[].class);
-            Loan[] myLoans = response.getBody();
-            // appel l'API gérant les emprunts puis récupération des livres réservés sous forme de tableau
-            ResponseEntity<Booking[]> bookings = restTemplate.getForEntity(bookingsUrl, Booking[].class);
-            Booking[] myBookings = bookings.getBody();
+            Loan[] myLoans = callLoanApi.getLoanbyMember(login);
+            Booking[] myBookings = callLoanApi.getBookingsByMember(login);
 
             model.addAttribute("myBookings" , myBookings);
             model.addAttribute("myLoans", myLoans);
@@ -74,21 +54,10 @@ public class LoanController {
     @RequestMapping("/loan/{id}/extend")
     public String extendLoan(@PathVariable(value = "id") Long id ,
                              RedirectAttributes redirectAttributes){
-        //Création d'un loan temporaire qui sera envoyé à l'API gérant les emprunts en ne précisant que son id et l'incrémentation du compteur de prolongation
-        Loan loan = new Loan();
-        loan.setId(id);
-        loan.setRefreshEndingCounter(1);
 
-        //Utilisation de la factory client request d'Apache pour prise en compte du verbe http PATCH avec restTemplate
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        restTemplate.setRequestFactory(requestFactory);
-
-        //création de l'url à appeler à partir de l'Id de l'emprunt à modifier
-        String url = UriComponentsBuilder.fromHttpUrl(loanUrl + loan.getId())
-                .toUriString();
         try {
-            //envoi de la requête et récupération de l'emprunt modifié
-            Loan patchedLoan = restTemplate.patchForObject(url, loan, Loan.class);
+            Loan patchedLoan = callLoanApi.patchLoan(id);
+
             //attribution des identifiants de l'emprunt modifié pour envoyer directement au @ModelAttribute de la méthode du controller de l'historique des emprunts
             Login login = new Login();
             login.setCardnumber(patchedLoan.getMember().getCardnumber());
