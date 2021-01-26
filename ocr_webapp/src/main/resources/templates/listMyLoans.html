@@ -11,6 +11,32 @@
 
 <div class="container container-fluid mt-3">
 
+    <div th:if="${myBookings} != null">
+        <div class="container col my-2">
+            <h2 class="text-primary text-center my-4">Vos réservations en cours</h2>
+
+            <table class="table table-striped alert-primary">
+                <thead>
+                <tr>
+                    <th>Date de réservation</th>
+                    <th>Titre du livre</th>
+                    <th>blabla</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="booking : ${myBookings}" >
+
+                    <td th:text="${#temporals.format(booking.getBookingDate(), 'dd-MM-yyyy')}">date de réservation</td>
+                    <td th:text="${booking.getTitle()}">Titre emprunté</td>
+                    <td>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
     <div th:if="${myLoans} != null">
         <div class="container col my-2">
             <h2 class="text-primary text-center my-4">Vos emprunts en cours</h2>

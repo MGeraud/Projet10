@@ -1,5 +1,6 @@
 package com.geraud.ocr_webapp.controllers;
 
+import com.geraud.ocr_webapp.model.Booking;
 import com.geraud.ocr_webapp.model.Loan;
 import com.geraud.ocr_webapp.utils.Login;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,8 @@ public class LoanController {
 
     @Value("${base.url.loan}")
     private String loanUrl;
+    @Value("${base.url.booking}")
+    private String bookingUrl;
     @Autowired
     RestTemplate restTemplate;
 
@@ -34,7 +37,14 @@ public class LoanController {
                                      Model model){
 
         //création de l'url à appeler à partir des critères de recherche récupérés (email et carte membre)
+        //pour appel des prêts de l'utilisateur
         String url = UriComponentsBuilder.fromHttpUrl(loanUrl)
+                .queryParam("email" , login.getEmail())
+                .queryParam("cardnumber", login.getCardnumber())
+                .toUriString();
+        //création de l'url à appeler à partir des critères de recherche récupérés (email et carte membre)
+        //pour appel des réservations de l'utilisateur
+        String bookingsUrl = UriComponentsBuilder.fromHttpUrl(bookingUrl + "member")
                 .queryParam("email" , login.getEmail())
                 .queryParam("cardnumber", login.getCardnumber())
                 .toUriString();
@@ -42,7 +52,11 @@ public class LoanController {
             // appel l'API gérant les emprunts puis récupération des livres emprunté sous forme de tableau
             ResponseEntity<Loan[]> response = restTemplate.getForEntity(url, Loan[].class);
             Loan[] myLoans = response.getBody();
+            // appel l'API gérant les emprunts puis récupération des livres réservés sous forme de tableau
+            ResponseEntity<Booking[]> bookings = restTemplate.getForEntity(bookingsUrl, Booking[].class);
+            Booking[] myBookings = bookings.getBody();
 
+            model.addAttribute("myBookings" , myBookings);
             model.addAttribute("myLoans", myLoans);
         }catch (Exception e){
             log.error("Erreur serveur : " + e.getMessage());
