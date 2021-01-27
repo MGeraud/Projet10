@@ -2,6 +2,7 @@ package com.geraud.ocr_webapp.controllers;
 
 import com.geraud.ocr_webapp.model.Booking;
 import com.geraud.ocr_webapp.model.Loan;
+import com.geraud.ocr_webapp.model.Member;
 import com.geraud.ocr_webapp.service.CallLoanApi;
 import com.geraud.ocr_webapp.utils.Login;
 import lombok.extern.slf4j.Slf4j;
@@ -69,5 +70,28 @@ public class LoanController {
         }
         //redirection vers l'historique des emprunts
        return "redirect:/myLoans";
+    }
+
+    /**
+     * controller permetant d'annuler une réservation
+     * @param id de la réservation à annuler
+     * @param redirectAttributes récupération de l'identité du membre annulant une réservation pour le rediriger vers sa page de profil
+     * @return page des emprunts et réservation du membre en cas de succès , sinon redirection vers la page d'erreur
+     */
+    @RequestMapping("/booking/{id}/delete")
+    public String deleteBooking(@PathVariable(value = "id") Long id,
+                                RedirectAttributes redirectAttributes){
+        try {
+            Member member = callLoanApi.deleteBooking(id);
+            Login login = new Login();
+            login.setCardnumber(member.getCardnumber());
+            login.setEmail(member.getEmail());
+            redirectAttributes.addFlashAttribute("identifiants", login);
+
+        } catch (Exception e){
+            log.error("erreur serveur " + e.getMessage());
+            return "redirect:/errorPage";
+        }
+        return "redirect:/myLoans";
     }
 }

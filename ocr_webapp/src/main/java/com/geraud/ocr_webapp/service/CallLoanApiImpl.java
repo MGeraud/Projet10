@@ -2,19 +2,26 @@ package com.geraud.ocr_webapp.service;
 
 import com.geraud.ocr_webapp.model.Booking;
 import com.geraud.ocr_webapp.model.Loan;
+import com.geraud.ocr_webapp.model.Member;
 import com.geraud.ocr_webapp.utils.Login;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * Voir la javadoc de l'interface
+ */
 @Slf4j
 @Service
 public class CallLoanApiImpl implements CallLoanApi{
+
     @Value("${base.url.loan}")
     private String loanUrl;
     @Value("${base.url.booking}")
@@ -70,5 +77,15 @@ public class CallLoanApiImpl implements CallLoanApi{
         //envoi de la requête et récupération de l'emprunt modifié
         Loan patchedLoan = restTemplate.patchForObject(url, loan, Loan.class);
         return patchedLoan;
+    }
+
+    @Override
+    public Member deleteBooking(Long id) {
+        //création de l'url à appeler à partir de l'Id de la réservation à annuler
+        String url = UriComponentsBuilder.fromHttpUrl(bookingUrl + id )
+                .toUriString();
+        //annulation de la réservation et récupération du membre en retour par méthode delete de l'api Loan
+        ResponseEntity<Member> member = restTemplate.exchange(url , HttpMethod.DELETE , HttpEntity.EMPTY,Member.class);
+        return member.getBody();
     }
 }

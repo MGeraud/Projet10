@@ -1,6 +1,7 @@
 package com.geraud.ocr_loan_api.controllers;
 
 import com.geraud.ocr_loan_api.domain.Booking;
+import com.geraud.ocr_loan_api.domain.Member;
 import com.geraud.ocr_loan_api.exceptions.FunctionnalException;
 import com.geraud.ocr_loan_api.services.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +42,14 @@ public class BookingController {
         return new ResponseEntity<Booking>(bookingService.createBooking(booking) , HttpStatus.OK);
     }
 
+    /**
+     * effacement d'une réservation
+     * @param id de la réservation à annuler
+     * @return
+     */
     @DeleteMapping("/booking/{id}")
-    public ResponseEntity<Long> deleteBooking(@PathVariable Long id){
-        bookingService.deleteBooking(id);
-        return new ResponseEntity<Long>(id , HttpStatus.OK);
+    public ResponseEntity<Member> deleteBooking(@PathVariable Long id){
+        return new ResponseEntity<Member>(bookingService.deleteBooking(id) , HttpStatus.OK);
     }
 
     @GetMapping("/booking/{id}/emailing")

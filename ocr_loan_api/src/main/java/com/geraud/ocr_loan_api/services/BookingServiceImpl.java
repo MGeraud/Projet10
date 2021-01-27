@@ -65,8 +65,10 @@ public class BookingServiceImpl implements BookingService{
      * @param id de la réserveation à effacer
      */
     @Override
-    public void deleteBooking(Long id) {
+    public Member deleteBooking(Long id) {
+        Member member = bookingDao.findById(id).get().getMember();
         bookingDao.deleteById(id);
+        return member;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.geraud.ocr_loan_api.services;
 
 import com.geraud.ocr_loan_api.domain.Booking;
+import com.geraud.ocr_loan_api.domain.Member;
 import com.geraud.ocr_loan_api.exceptions.FunctionnalException;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface BookingService {
 
     Booking createBooking(Booking booking) throws FunctionnalException;
 
-    void deleteBooking(Long id);
+    Member deleteBooking(Long id);
 
     Booking patchBooking(Long id);
 }

@@ -11,6 +11,7 @@
 
 <div class="container container-fluid mt-3">
 
+    <!-- Table de présentation des réservations -->
     <div th:if="${myBookings} != null">
         <div class="container col my-2">
             <h2 class="text-primary text-center my-4">Vos réservations en cours</h2>
@@ -20,7 +21,7 @@
                 <tr>
                     <th>Date de réservation</th>
                     <th>Titre du livre</th>
-                    <th>blabla</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,14 +31,20 @@
                     <td th:text="${#temporals.format(booking.getBookingDate(), 'dd-MM-yyyy')}">date de réservation</td>
                     <td th:text="${booking.getTitle()}">Titre emprunté</td>
                     <td>
-
+                        <button type="button" class="btn btn-danger">
+                            <a class="text-white" href="#" th:href="@{'/booking/' + ${booking.getId()}+ '/delete'}">Annuler la réservation </a>
+                        </button>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
+
+    <!-- les Emprunts -->
     <div th:if="${myLoans} != null">
+        <!-- Table de prśentation des emprunts en cours -->
         <div class="container col my-2">
             <h2 class="text-primary text-center my-4">Vos emprunts en cours</h2>
 
@@ -69,6 +76,7 @@
                 </tbody>
             </table>
         </div>
+        <!-- Table de présentation des emprunts rendus -->
         <div class="container col">
             <h2 class="text-primary text-center my-4">Historique de vos emprunts rendus</h2>
 
