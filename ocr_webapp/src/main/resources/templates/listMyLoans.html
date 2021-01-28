@@ -64,11 +64,16 @@
                     <td th:text="${loan.getTitle()}">Titre emprunté</td>
                     <td>
                         <span th:if="${loan.getRefreshEndingCounter()== 0 && loan.getBookBackDate()== null}">
-                            <button class="btn btn-primary">
-                                <a class="text-white" href="#" th:href="@{'/loan/' + ${loan.getId()} + '/extend'}">Prolonger </a>
-                            </button>
+                            <span th:if="${loan.getStartingDate().plusWeeks(4) > #temporals.createToday()}">
+                                <button class="btn btn-primary">
+                                    <a class="text-white" href="#" th:href="@{'/loan/' + ${loan.getId()} + '/extend'}">Prolonger </a>
+                                </button>
+                            </span>
+                            <span class="text-danger" th:unless="${loan.getStartingDate().plusWeeks(4) > #temporals.createToday()}"> Délai dépassé - Veuillez nous ramener le livre</span>
                         </span>
-                        <span class="text-danger" th:if="${loan.getRefreshEndingCounter() > 0 && loan.getBookBackDate()== null}" th:text="'Emprunt prolongé'">
+                        <span class="test-primary"
+                              th:if="${loan.getRefreshEndingCounter() > 0 && loan.getBookBackDate()== null}"
+                              th:text="'Emprunt prolongé'">
                             Emprunt prolongé
                         </span>
                     </td>
