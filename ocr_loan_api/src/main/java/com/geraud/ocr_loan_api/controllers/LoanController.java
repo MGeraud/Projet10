@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 @RestController
@@ -43,5 +45,11 @@ public class LoanController {
     @GetMapping("/loan/{label}")
     public boolean available(@PathVariable String label){
         return loanService.labelAvailable(label);
+    }
+
+    @GetMapping("/loan/title")
+    public List<Loan> loansByTitle(@RequestParam("title") String title) throws UnsupportedEncodingException {
+        String titleToUtf = URLDecoder.decode(title , "utf-8");
+        return loanService.listLoansByTitle(titleToUtf);
     }
 }

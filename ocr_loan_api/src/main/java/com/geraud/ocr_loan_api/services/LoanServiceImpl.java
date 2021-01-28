@@ -89,5 +89,10 @@ public class LoanServiceImpl implements LoanService{
         return notAvailable.isEmpty();
     }
 
+    @Override
+    public List<Loan> listLoansByTitle(String title) {
+        return loanDao.findByTitleAndBookBackDateIsNull(title);
+    }
+
 
 }

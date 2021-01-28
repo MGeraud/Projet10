@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -74,10 +77,11 @@ public class BookController {
     @RequestMapping(value = "/books/author")
     public PagedModel<EntityModel<Book>> showByAuthor(@RequestParam(value = "page", defaultValue = "0") int page,
                                    @RequestParam(value = "size", defaultValue = "5") int size,
-                                   @RequestParam("queryparam") String author) {
+                                   @RequestParam("queryparam") String author) throws UnsupportedEncodingException {
 
+        String authorToUtf8 = URLDecoder.decode(author , "utf-8");
         Pageable pageable = PageRequest.of(page, size);
-        Page<Book> books = bookService.findByAuthor(author, pageable);
+        Page<Book> books = bookService.findByAuthor(authorToUtf8, pageable);
         return pagedResourcesAssembler.toModel(books, bookModelAssembler) ;
     }
 
@@ -92,10 +96,11 @@ public class BookController {
     @RequestMapping(value = "/books/title")
     public PagedModel<EntityModel<Book>> showByTitle(@RequestParam(value = "page", defaultValue = "0") int page,
                                   @RequestParam(value = "size", defaultValue = "5") int size,
-                                  @RequestParam("queryparam") String title) {
+                                  @RequestParam("queryparam") String title) throws UnsupportedEncodingException {
 
+        String titleToUTF8 = URLDecoder.decode(title , "utf-8");
         Pageable pageable = PageRequest.of(page, size);
-        Page<Book> books = bookService.findByTitle(title, pageable);
+        Page<Book> books = bookService.findByTitle(titleToUTF8, pageable);
         return pagedResourcesAssembler.toModel(books, bookModelAssembler);
     }
 
