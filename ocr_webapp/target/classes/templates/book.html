@@ -22,8 +22,8 @@
         <p>
             <span class=" text-primary" th:text="'Auteur(s) : '"> auteur</span>
             <span class="col-3" th:each="author : ${book.getAuthors()}">
-        <span th:text="${author.getFirstname()} + ' ' + ${author.getLastname()}">nom</span>
-    </span>
+                <span th:text="${author.getFirstname()} + ' ' + ${author.getLastname()}">nom</span>
+            </span>
         </p>
         <p class="row">
         <span class="col">
@@ -35,35 +35,51 @@
             <span th:text="${book.getYear()}"> an</span>
         </span>
         </p>
+        <p class="row text-warning">
+            <span th:if="${booking != null}">
+                <span th:if="${book.getStocks().size() <= ( 2 * available.size())}" th:text="'Il existe déjà ' + ${booking.getNumberOfBooking()} +
+                 ' réservations pour ce livre et la date de retour la plus proche est estimée au '
+                 + ${#temporals.format(booking.getGuessedBookBackDate() , 'dd-MM-yyyy')} + '.' " >
+                    texte réservations
+                </span>
+                <span th:unless="${book.getStocks().size() <= ( 2 * available.size())}"
+                      th:text='Le nombre de réservations pour ce livre est actuellement trop élevé, veuillez réesayer plus tard.'>
+                    Exces réservations
+                </span>
+            </span>
+        </p>
     </div>
     <!-- Carte pour chacun des exemplaire du livre : où le trouver et disponibilité -->
     <div class="card-deck">
-    <div  th:each="label : ${book.getStocks()}">
-        <div class="card border-success my-2">
-            <div class="card-header">
-                <div class="card-title text-primary" th:text="'Bibliothèque : ' + ${label.getPk().getLibrary().getLibrary_name()}">Bibliotheque</div>
-                <p th:text="${label.getPk().getLibrary().getAddress()}">adresse</p>
-                <p th:text="'Horaires du lundi au vendredi :'">heures ouvertures</p>
-                <p th:text="${label.getPk().getLibrary().getOpening_hours()}">xx-xx</p>
-            </div>
-            <div class="card-body">
-                <span class="title text-primary" th:text="'Où me chercher : '">lieu </span><br/>
-                <span th:text="'Allée : ' + ${label.getWings()}">allée</span><br/>
-                <span th:text="'Colonne : ' + ${label.getPillar()}">colonne</span><br/>
-                <span th:text="'Etagère : ' + ${label.getShelf()}">etagere</span><br/>
-                <span th:text="'Référence : ' + ${label.getLabel()}">reference</span><br/>
-            </div>
-            <div class="card-footer">
-                <p class="title text-primary" th:text="'Disponbilité : '">Dispo ?</p>
-                <p th:each="dispo : ${available}">
+        <div th:each="label : ${book.getStocks()}">
+            <div class="card border-success my-2">
+                <div class="card-header">
+                    <div class="card-title text-primary"
+                         th:text="'Bibliothèque : ' + ${label.getPk().getLibrary().getLibrary_name()}">Bibliotheque
+                    </div>
+                    <p th:text="${label.getPk().getLibrary().getAddress()}">adresse</p>
+                    <p th:text="'Horaires du lundi au vendredi :'">heures ouvertures</p>
+                    <p th:text="${label.getPk().getLibrary().getOpening_hours()}">xx-xx</p>
+                </div>
+                <div class="card-body">
+                    <span class="title text-primary" th:text="'Où me chercher : '">lieu </span><br/>
+                    <span th:text="'Allée : ' + ${label.getWings()}">allée</span><br/>
+                    <span th:text="'Colonne : ' + ${label.getPillar()}">colonne</span><br/>
+                    <span th:text="'Etagère : ' + ${label.getShelf()}">etagere</span><br/>
+                    <span th:text="'Référence : ' + ${label.getLabel()}">reference</span><br/>
+                </div>
+                <div class="card-footer">
+                    <p class="title text-primary" th:text="'Disponbilité : '">Dispo ?</p>
+                    <p th:each="dispo : ${available}">
                 <span th:if="${label.getLabel().equals(dispo.getKey()) }">
                     <span class="alert-success" th:if="${dispo.getValue().equals('true')}"> Exemplaire disponible</span>
-                    <span class="alert-danger" th:unless="${dispo.getValue().equals('true')}">Exemplaire non disponible</span>
+                    <span class="alert-danger"
+                          th:unless="${dispo.getValue().equals('true')}">Exemplaire non disponible</span>
                 </span>
-                </p>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 </div>
 

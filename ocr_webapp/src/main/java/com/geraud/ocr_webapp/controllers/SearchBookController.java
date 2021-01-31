@@ -133,11 +133,11 @@ public class SearchBookController {
         int numberOfLabelBooked = (int) available.values().stream().filter(value -> value.equals("false")).count();
 
         // si tous les exemplaires de ce livre sont non disponible récupération de la date retour et nombre de réservations
+        BookedTitle bookedTitle = null;
         if (book.getStocks().size() == numberOfLabelBooked) {
-            BookedTitle bookedTitle = bookedTitleCreation.createBookedTitle(book);
-            model.addAttribute("booking" , bookedTitle);
+            bookedTitle = bookedTitleCreation.createBookedTitle(book);
         }
-
+        model.addAttribute("booking" , bookedTitle);
         model.addAttribute("available" , available );
         model.addAttribute("book" , book);
         model.addAttribute("identifiants", new Login());
