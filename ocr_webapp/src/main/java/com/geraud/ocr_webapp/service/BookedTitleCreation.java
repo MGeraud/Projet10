@@ -1,5 +1,6 @@
 package com.geraud.ocr_webapp.service;
 
+import com.geraud.ocr_webapp.model.Book;
 import com.geraud.ocr_webapp.model.BookedTitle;
 import com.geraud.ocr_webapp.model.Booking;
 import com.geraud.ocr_webapp.model.Loan;
@@ -20,7 +21,7 @@ public class BookedTitleCreation {
     @Autowired
     CallLoanApi callLoanApi;
 
-    public List<BookedTitle> createBookedTitle(Login login){
+    public List<BookedTitle> createBookedTitles(Login login){
         List<BookedTitle> bookedTitles = new ArrayList<>();
 
         Booking[] myBookings = callLoanApi.getBookingsByMember(login);
@@ -31,7 +32,7 @@ public class BookedTitleCreation {
             BookedTitle bookedTitle = new BookedTitle();
             bookedTitle.setBooking(booking);
             bookedTitle.setQueuePosition(findPositionInQueue(booking));
-            bookedTitle.setGuessedBookBackDate(guessBookBackDate(booking));
+            bookedTitle.setGuessedBookBackDate(guessBookBackDate(booking.getTitle()));
 
             bookedTitles.add(bookedTitle);
         }
@@ -61,13 +62,13 @@ public class BookedTitleCreation {
     }
 
     /**
-     * Méthode utilitaire permetant de rechercher la date probable de retour la plus proche d'un titre réservé par un membre
-     * @param booking la réservation du titre par le membre
+     * Méthode utilitaire permetant de rechercher la date probable de retour la plus proche d'un titre
+     * @param title le titre du livre
      * @return date de retour probable la plus proche
      */
-    private LocalDate guessBookBackDate(Booking booking){
+    private LocalDate guessBookBackDate(String title){
         //récupération d'un array des emprunts avec le même titre
-        Loan[] titleLoans = callLoanApi.getLoanByTitle(booking.getTitle());
+        Loan[] titleLoans = callLoanApi.getLoanByTitle(title);
         //tri de cet array par date d'emprunt
         Arrays.stream(titleLoans).sorted(Comparator.comparing(Loan::getStartingDate)).collect(Collectors.toList());
         // division de titleLoans en 2 list en fonction de si l'emprunt est prolongé
@@ -88,5 +89,16 @@ public class BookedTitleCreation {
         } else {
             return nonExtendedLoans.get(0).getStartingDate().plusWeeks(4);
         }
+    }
+
+    public BookedTitle createBookedTitle(Book book){
+        BookedTitle bookedTitle = new BookedTitle();
+        //récupération de la date de retour la plus proche
+        bookedTitle.setGuessedBookBackDate(guessBookBackDate(book.getTitle()));
+        //récupération d'un array des emprunts avec le même titre
+        Loan[] titleLoans = callLoanApi.getLoanByTitle(book.getTitle());
+        bookedTitle.setNumberOfBooking(titleLoans.length);
+
+        return bookedTitle;
     }
 }

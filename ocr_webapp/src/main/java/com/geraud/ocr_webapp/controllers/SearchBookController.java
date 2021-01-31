@@ -1,7 +1,9 @@
 package com.geraud.ocr_webapp.controllers;
 
 import com.geraud.ocr_webapp.model.Book;
+import com.geraud.ocr_webapp.model.BookedTitle;
 import com.geraud.ocr_webapp.model.Stock;
+import com.geraud.ocr_webapp.service.BookedTitleCreation;
 import com.geraud.ocr_webapp.utils.Login;
 import com.geraud.ocr_webapp.utils.SearchBookParameters;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,8 @@ public class SearchBookController {
 
     @Autowired
     RestTemplate restTemplate;
+    @Autowired
+    BookedTitleCreation bookedTitleCreation;
 
     /**
      * Page de recherche de livres d'après un formulaire à 2 entrées
@@ -124,10 +128,16 @@ public class SearchBookController {
                 log.error("Erreur serveur : " + e.getMessage());
                 return "redirect:/errorPage";
             }
-
-
-
         }
+        //comptabilisation du nombre d'exemplaire non disponibles
+        int numberOfLabelBooked = (int) available.values().stream().filter(value -> value.equals("false")).count();
+
+        // si tous les exemplaires de ce livre sont non disponible récupération de la date retour et nombre de réservations
+        if (book.getStocks().size() == numberOfLabelBooked) {
+            BookedTitle bookedTitle = bookedTitleCreation.createBookedTitle(book);
+            model.addAttribute("booking" , bookedTitle);
+        }
+
         model.addAttribute("available" , available );
         model.addAttribute("book" , book);
         model.addAttribute("identifiants", new Login());

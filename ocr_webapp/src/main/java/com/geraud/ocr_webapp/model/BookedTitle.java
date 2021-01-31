@@ -16,4 +16,5 @@ public class BookedTitle {
     private Booking booking;
     private LocalDate guessedBookBackDate;
     private int queuePosition;
+    private int numberOfBooking;
 }
