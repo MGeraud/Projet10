@@ -1,8 +1,10 @@
 package com.geraud.ocr_webapp.controllers;
 
+import com.geraud.ocr_webapp.model.BookedTitle;
 import com.geraud.ocr_webapp.model.Booking;
 import com.geraud.ocr_webapp.model.Loan;
 import com.geraud.ocr_webapp.model.Member;
+import com.geraud.ocr_webapp.service.BookedTitleCreation;
 import com.geraud.ocr_webapp.service.CallLoanApi;
 import com.geraud.ocr_webapp.utils.Login;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +19,16 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @Controller
 @Slf4j
 public class LoanController {
 
     @Autowired
     CallLoanApi callLoanApi;
+    @Autowired
+    BookedTitleCreation bookedTitleCreation;
 
     /**
      * Liste les livres empruntés
@@ -35,9 +41,9 @@ public class LoanController {
                                      Model model){
         try {
             Loan[] myLoans = callLoanApi.getLoanbyMember(login);
-            Booking[] myBookings = callLoanApi.getBookingsByMember(login);
+            List<BookedTitle> bookedTitle = bookedTitleCreation.createBookedTitle(login);
 
-            model.addAttribute("myBookings" , myBookings);
+            model.addAttribute("myBookings" , bookedTitle);
             model.addAttribute("myLoans", myLoans);
         }catch (Exception e){
             log.error("Erreur serveur : " + e.getMessage());

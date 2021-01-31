@@ -21,6 +21,8 @@
                 <tr>
                     <th>Date de réservation</th>
                     <th>Titre du livre</th>
+                    <th>Date de retour prévue</th>
+                    <th>Votre position en file d'attente</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -28,11 +30,13 @@
 
                 <tr th:each="booking : ${myBookings}" >
 
-                    <td th:text="${#temporals.format(booking.getBookingDate(), 'dd-MM-yyyy')}">date de réservation</td>
-                    <td th:text="${booking.getTitle()}">Titre emprunté</td>
+                    <td th:text="${#temporals.format(booking.getBooking().getBookingDate(), 'dd-MM-yyyy')}">date de réservation</td>
+                    <td th:text="${booking.getBooking().getTitle()}">Titre emprunté</td>
+                    <td th:text="${#temporals.format(booking.getGuessedBookBackDate(), 'dd-MM-yyyy')}">date retour probable</td>
+                    <td th:text="${booking.getQueuePosition()}">position en file attente</td>
                     <td>
                         <button type="button" class="btn btn-danger">
-                            <a class="text-white" href="#" th:href="@{'/booking/' + ${booking.getId()}+ '/delete'}">Annuler la réservation </a>
+                            <a class="text-white" href="#" th:href="@{'/booking/' + ${booking.getBooking().getId()}+ '/delete'}">Annuler la réservation </a>
                         </button>
                     </td>
                 </tr>

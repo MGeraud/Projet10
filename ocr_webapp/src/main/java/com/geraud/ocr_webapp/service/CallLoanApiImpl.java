@@ -88,4 +88,31 @@ public class CallLoanApiImpl implements CallLoanApi{
         ResponseEntity<Member> member = restTemplate.exchange(url , HttpMethod.DELETE , HttpEntity.EMPTY,Member.class);
         return member.getBody();
     }
+
+    @Override
+    public Booking[] getBookingByTitle(String title) {
+        //création de l'url à appeler à partir du titre de l'ouvrage
+        //pour appel des réservations de celui -ci
+        String bookingsUrl = UriComponentsBuilder.fromHttpUrl(bookingUrl + "title")
+                .queryParam("title" , title)
+                .toUriString();
+        // appel l'API gérant les emprunts puis récupération des livres réservés sous forme de tableau
+        ResponseEntity<Booking[]> bookings = restTemplate.getForEntity(bookingsUrl, Booking[].class);
+        Booking[] titleBookings = bookings.getBody();
+        return titleBookings;
+    }
+
+    @Override
+    public Loan[] getLoanByTitle(String title) {
+        //création de l'url à appeler à partir du titre de l'ouvrage
+        //pour appel des prêts en cours de ce titre
+        String url = UriComponentsBuilder.fromHttpUrl(loanUrl + "title")
+                .queryParam("title" , title)
+                .toUriString();
+
+        // appel l'API gérant les emprunts puis récupération des livres emprunté sous forme de tableau
+        ResponseEntity<Loan[]> response = restTemplate.getForEntity(url, Loan[].class);
+        Loan[] titleLoans = response.getBody();
+        return titleLoans;
+    }
 }

@@ -91,7 +91,7 @@ public class LoanServiceImpl implements LoanService{
 
     @Override
     public List<Loan> listLoansByTitle(String title) {
-        return loanDao.findByTitleAndBookBackDateIsNull(title);
+        return loanDao.findByTitleAndBookBackDateIsNullOrderByStartingDate(title);
     }
 
 

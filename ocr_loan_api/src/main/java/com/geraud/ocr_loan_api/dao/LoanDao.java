@@ -18,5 +18,5 @@ public interface LoanDao extends JpaRepository<Loan , Long> {
 
     Optional<Loan> findByLabelEqualsAndBookBackDateIsNull(String label);
 
-    List<Loan> findByTitleAndBookBackDateIsNull(String title);
+    List<Loan> findByTitleAndBookBackDateIsNullOrderByStartingDate(String title);
 }

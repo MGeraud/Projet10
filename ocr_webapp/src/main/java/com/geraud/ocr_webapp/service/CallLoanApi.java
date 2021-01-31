@@ -34,4 +34,18 @@ public interface CallLoanApi {
      * @return l'identité du membre ayant annulé sa réservation
      */
     Member deleteBooking(Long id);
+
+    /**
+     * Méthode de récupération des réservation d'un titre
+     * @param title titre de l'ouvrage
+     * @return array des réservations correspondant au titre ci dessus
+     */
+    Booking[] getBookingByTitle(String title);
+
+    /**
+     * Methode de récupération des emprunt d'un titre
+     * @param title titre de l'ouvrage
+     * @return array des emprunts du titre passé en paramètre
+     */
+    Loan[] getLoanByTitle(String title);
 }
