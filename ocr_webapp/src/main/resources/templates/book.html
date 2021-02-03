@@ -37,7 +37,7 @@
         </p>
         <p class="row">
         <div th:if="${booking != null}">
-            <div th:if="${book.getStocks().size() <= ( 2 * available.size())}">
+            <div th:if="${(2 * book.getStocks().size()) >= booking.getNumberOfBooking()}">
                 <p class="text-warning" th:text="'Il existe déjà ' + ${booking.getNumberOfBooking()} +' réservations pour ce livre et la date de retour la plus proche est estimée au '
                                + ${#temporals.format(booking.getGuessedBookBackDate() , 'dd-MM-yyyy')} + '.' ">texte réservations</p>
                 <div>
@@ -70,10 +70,10 @@
                     </div>
                 </div>
             </div>
-            <div th:unless="${book.getStocks().size() <= ( 2 * available.size())}"
-                  th:text='Le nombre de réservations pour ce livre est actuellement trop élevé, veuillez réesayer plus tard.'>
+            <p class="text-warning" th:unless="${(2 * book.getStocks().size()) >=  booking.getNumberOfBooking()}"
+                  th:text="'Le nombre de réservations pour ce livre est actuellement trop élevé. Veuillez réesayer plus tard.'" >
                     Exces réservations
-            </div>
+            </p>
         </div>
         </p>
     </div>

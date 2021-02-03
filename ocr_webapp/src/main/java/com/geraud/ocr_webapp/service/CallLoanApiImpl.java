@@ -165,7 +165,7 @@ public class CallLoanApiImpl implements CallLoanApi{
             }
         }
 
-        Loan[] myLoans = this.getLoanbyMember(login);
+        Loan[] myLoans = this.getLoanByTitle(title);
         for (Loan loan: myLoans
         ) {
             if (loan.getMember().getEmail().equals(login.getEmail()) && loan.getBookBackDate() != null){

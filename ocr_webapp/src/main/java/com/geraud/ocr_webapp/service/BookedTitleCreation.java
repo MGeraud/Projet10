@@ -96,8 +96,8 @@ public class BookedTitleCreation {
         //récupération de la date de retour la plus proche
         bookedTitle.setGuessedBookBackDate(guessBookBackDate(book.getTitle()));
         //récupération d'un array des emprunts avec le même titre
-        Loan[] titleLoans = callLoanApi.getLoanByTitle(book.getTitle());
-        bookedTitle.setNumberOfBooking(titleLoans.length);
+        Booking[] titleBookings = callLoanApi.getBookingByTitle(book.getTitle());
+        bookedTitle.setNumberOfBooking(titleBookings.length);
 
         return bookedTitle;
     }

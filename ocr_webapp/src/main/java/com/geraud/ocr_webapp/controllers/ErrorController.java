@@ -13,4 +13,10 @@ public class ErrorController {
         model.addAttribute("identifiants", new Login());
         return "errorPage";
     }
+
+    @GetMapping("/alreadyBooked")
+    public String alredayBookedError (Model model){
+        model.addAttribute("identifiants" , new Login());
+        return  "alreadyBooked";
+    }
 }
