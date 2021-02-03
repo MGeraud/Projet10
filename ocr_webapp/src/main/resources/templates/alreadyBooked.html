@@ -10,5 +10,12 @@
 <div th:replace="fragment/common :: header"> En tête</div>
 
 <h1 class="title text-center text-primary mt-5">Ce titre fait déjà partie de vos réservations ou de vos emprunts en cours</h1>
+<div class="row justify-content-center">
+<form action="#" th:action="@{/myLoans}" th:object="${identifiants}" method="post">
+    <input hidden th:field="*{email}" th:value="${identifiants.getEmail()}">
+    <input hidden th:field="*{cardnumber}" th:value="${identifiants.getCardnumber()}">
+    <input class="btn btn-info mx-md-3 my-2" type="submit" value="Aller sur ma page d'emprunts et réservations">
+</form>
+</div>
 </body>
 </html>
