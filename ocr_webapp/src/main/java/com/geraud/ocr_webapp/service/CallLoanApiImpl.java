@@ -1,5 +1,7 @@
 package com.geraud.ocr_webapp.service;
 
+import com.geraud.ocr_webapp.exception.FunctionnalException;
+import com.geraud.ocr_webapp.exception.NotAllowedBookingException;
 import com.geraud.ocr_webapp.model.Booking;
 import com.geraud.ocr_webapp.model.Loan;
 import com.geraud.ocr_webapp.model.Member;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDate;
+
 /**
  * Voir la javadoc de l'interface
  */
@@ -26,6 +30,8 @@ public class CallLoanApiImpl implements CallLoanApi{
     private String loanUrl;
     @Value("${base.url.booking}")
     private String bookingUrl;
+    @Value("${base.url.member}")
+    private String memberUrl;
 
     @Autowired
     RestTemplate restTemplate;
@@ -114,5 +120,57 @@ public class CallLoanApiImpl implements CallLoanApi{
         ResponseEntity<Loan[]> response = restTemplate.getForEntity(url, Loan[].class);
         Loan[] titleLoans = response.getBody();
         return titleLoans;
+    }
+
+    @Override
+    public void createBooking(String title, Login login) throws NotAllowedBookingException, FunctionnalException {
+
+        this.checkNotBookedOrLoaned(title, login);
+
+        Booking bookingToBeCreated = new Booking();
+        try{
+            String bookingsUrl = UriComponentsBuilder.fromHttpUrl(memberUrl)
+                    .queryParam("email" , login.getEmail())
+                    .queryParam("cardnumber", login.getCardnumber())
+                    .toUriString();
+            // appel l'API pour voir si le membre identifié existe et récupérer son id
+            ResponseEntity<Member> member = restTemplate.getForEntity(bookingsUrl, Member.class);
+            bookingToBeCreated.setMember(member.getBody());
+            bookingToBeCreated.setBookingDate(LocalDate.now());
+            bookingToBeCreated.setTitle(title);
+        }catch (Exception e){
+            throw new FunctionnalException("Erreur lors de la recherche de membre avec ces identifiants : " + login.toString());
+        }
+
+        //création de l'url pour créer la réservation
+        String url = UriComponentsBuilder.fromHttpUrl(bookingUrl)
+                .toUriString();
+        //envoi de la requête et récupération de l'emprunt modifié
+        Booking createdBooking = restTemplate.postForObject(url, bookingToBeCreated, Booking.class);
+
+    }
+
+    /**
+     * Utils pour vérifier qu'un titre ne soit pas déjà réservé ou en cours d'emprunt pour le membre identifié
+     * @param title titre de l'ouvrage
+     * @param login identifiants du membre
+     * @throws NotAllowedBookingException envoi d'une exception custom si titre déjà réservé ou en cours d'emprunt par ce membre
+     */
+    private void checkNotBookedOrLoaned(String title, Login login) throws NotAllowedBookingException {
+        Booking[] myBookings = this.getBookingsByMember(login);
+        for (Booking booking: myBookings
+        ) {
+            if (booking.getTitle().equals(title)){
+                throw new NotAllowedBookingException("Ce membre a déjà une réservation de ce titre en cours");
+            }
+        }
+
+        Loan[] myLoans = this.getLoanbyMember(login);
+        for (Loan loan: myLoans
+        ) {
+            if (loan.getMember().getEmail().equals(login.getEmail()) && loan.getBookBackDate() != null){
+                throw new NotAllowedBookingException("Ce membre possede déjà ce titre");
+            }
+        }
     }
 }

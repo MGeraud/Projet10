@@ -1,5 +1,7 @@
 package com.geraud.ocr_webapp.controllers;
 
+import com.geraud.ocr_webapp.exception.FunctionnalException;
+import com.geraud.ocr_webapp.exception.NotAllowedBookingException;
 import com.geraud.ocr_webapp.model.BookedTitle;
 import com.geraud.ocr_webapp.model.Loan;
 import com.geraud.ocr_webapp.model.Member;
@@ -13,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 @Controller
@@ -91,6 +95,22 @@ public class LoanController {
         } catch (Exception e){
             log.error("erreur serveur " + e.getMessage());
             return "redirect:/errorPage";
+        }
+        return "redirect:/myLoans";
+    }
+
+    @RequestMapping("/booking/createBooking/{title}")
+    public String createBooking (@ModelAttribute("identifiants") Login login, @PathVariable(value = "title") String title,
+                                 RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
+        redirectAttributes.addFlashAttribute("identifiants" , login);
+        String titleToUtf8 = URLDecoder.decode(title , "utf-8");
+        try{
+            callLoanApi.createBooking(titleToUtf8 , login);
+        }catch (FunctionnalException e) {
+            log.error("erreur création réservation" + e);
+            return "redirect:/errorPage";
+        }catch (NotAllowedBookingException e){
+            return "redirect:/alreadyBooked";
         }
         return "redirect:/myLoans";
     }

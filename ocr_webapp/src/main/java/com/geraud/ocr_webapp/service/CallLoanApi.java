@@ -1,5 +1,7 @@
 package com.geraud.ocr_webapp.service;
 
+import com.geraud.ocr_webapp.exception.FunctionnalException;
+import com.geraud.ocr_webapp.exception.NotAllowedBookingException;
 import com.geraud.ocr_webapp.model.Booking;
 import com.geraud.ocr_webapp.model.Loan;
 import com.geraud.ocr_webapp.model.Member;
@@ -48,4 +50,11 @@ public interface CallLoanApi {
      * @return array des emprunts du titre passé en paramètre
      */
     Loan[] getLoanByTitle(String title);
+
+    /**
+     * Methode de création d'une réservation
+     * @param title titre de l'ouvrage à réserver
+     * @param login identifiants du membre souhaitant réserver l'ouvrage
+     */
+    void createBooking(String title, Login login) throws NotAllowedBookingException, FunctionnalException;
 }

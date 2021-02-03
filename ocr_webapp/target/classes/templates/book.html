@@ -11,10 +11,10 @@
 
 <!-- image à gauche sur écran tablette et + -->
 <div class="container float-md-left col-md-3 text-center">
-    <img class=" my-2" src="#" th:src="@{${book.getImage()}}">
+    <img class=" my-2 mx-2 " src="#" th:src="@{${book.getImage()}}">
 </div>
 <!-- Détails à droite sur écrans tablette et +-->
-<div class="container float-md-right col-md-9">
+<div class="container float-md-right col-md-8">
     <div class="m-md-3">
         <p>
         <h1 th:text="${book.getTitle()}">titre</h1>
@@ -35,18 +35,46 @@
             <span th:text="${book.getYear()}"> an</span>
         </span>
         </p>
-        <p class="row text-warning">
-            <span th:if="${booking != null}">
-                <span th:if="${book.getStocks().size() <= ( 2 * available.size())}" th:text="'Il existe déjà ' + ${booking.getNumberOfBooking()} +
-                 ' réservations pour ce livre et la date de retour la plus proche est estimée au '
-                 + ${#temporals.format(booking.getGuessedBookBackDate() , 'dd-MM-yyyy')} + '.' " >
-                    texte réservations
-                </span>
-                <span th:unless="${book.getStocks().size() <= ( 2 * available.size())}"
-                      th:text='Le nombre de réservations pour ce livre est actuellement trop élevé, veuillez réesayer plus tard.'>
+        <p class="row">
+        <div th:if="${booking != null}">
+            <div th:if="${book.getStocks().size() <= ( 2 * available.size())}">
+                <p class="text-warning" th:text="'Il existe déjà ' + ${booking.getNumberOfBooking()} +' réservations pour ce livre et la date de retour la plus proche est estimée au '
+                               + ${#temporals.format(booking.getGuessedBookBackDate() , 'dd-MM-yyyy')} + '.' ">texte réservations</p>
+                <div>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#formForBooking">
+                        Réserver ce livre
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="formForBooking" tabindex="-1" role="dialog" aria-labelledby="Identifiants" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="Identifiants">Confirmez vos identifiant pour réserver le titre</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-group mx-5  " action="#" th:action="@{/booking/createBooking/{title}(title=${book.getTitle()})}" th:object="${identifiants}" method="post">
+                                        <label class="col-form-label mx-md-3 my-1" th:text=" Email"></label>
+                                        <input class="form-control mx-md-3 my-1" type="text" th:field="*{email}"/>
+                                        <label class="col-form-label mx-md-3 my-1" th:text="' Carte n° : '"></label>
+                                        <input class="form-control mx-md-3 my-1" type="text" th:field="*{cardnumber}"/>
+                                        <input class="btn btn-info mx-md-3 my-2" type="submit" value="Envoyer">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span th:unless="${book.getStocks().size() <= ( 2 * available.size())}"
+                  th:text='Le nombre de réservations pour ce livre est actuellement trop élevé, veuillez réesayer plus tard.'>
                     Exces réservations
                 </span>
-            </span>
+        </div>
         </p>
     </div>
     <!-- Carte pour chacun des exemplaire du livre : où le trouver et disponibilité -->
