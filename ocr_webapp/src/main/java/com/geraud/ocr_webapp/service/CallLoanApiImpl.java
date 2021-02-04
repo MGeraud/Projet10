@@ -168,7 +168,7 @@ public class CallLoanApiImpl implements CallLoanApi{
         Loan[] myLoans = this.getLoanByTitle(title);
         for (Loan loan: myLoans
         ) {
-            if (loan.getMember().getEmail().equals(login.getEmail()) && loan.getBookBackDate() != null){
+            if (loan.getMember().getEmail().equals(login.getEmail()) && loan.getBookBackDate() == null){
                 throw new NotAllowedBookingException("Ce membre possede déjà ce titre");
             }
         }
