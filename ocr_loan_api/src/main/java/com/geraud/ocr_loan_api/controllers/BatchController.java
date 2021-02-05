@@ -44,4 +44,15 @@ public class BatchController {
         return new ResponseEntity<>(batchService.getBookingByTitleAndMailSendDateIsNull(title) , HttpStatus.OK);
     }
 
+    /**
+     * obtention de la liste des réservations dont le mail de notification de disponibilité a été envoyé à la date passée en paramètre
+     * @param date d'envoi de la notification de disponibilité
+     * @return liste des réservations
+     */
+    @GetMapping("/batch/booking/maildate")
+    public ResponseEntity<List<Booking>> bookingsByMailSendDate(@RequestParam("date") LocalDate date)
+    {
+        return new ResponseEntity<>(batchService.getBookingByMailSendDate(date) , HttpStatus.OK);
+    }
+
 }

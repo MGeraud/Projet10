@@ -42,4 +42,14 @@ public class BatchSerciceImpl implements BatchService{
     public List<Booking> getBookingByTitleAndMailSendDateIsNull(String title) {
         return bookingDao.findByTitleAndMailSendDateIsNullOrderByBookingDate(title);
     }
+
+    /**
+     * Recherche des réservations dont la date d'envoi de mail de notification de disponibilité est passée en paramètre
+     * @param date d'envoi du mail denotification de disponibilité
+     * @return liste de réservations
+     */
+    @Override
+    public List<Booking> getBookingByMailSendDate(LocalDate date) {
+        return bookingDao.findByMailSendDate(date);
+    }
 }

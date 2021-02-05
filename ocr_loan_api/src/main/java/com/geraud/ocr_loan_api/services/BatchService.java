@@ -12,4 +12,6 @@ public interface BatchService {
     List<Loan> getLoansBackToday();
 
     List<Booking> getBookingByTitleAndMailSendDateIsNull(String title);
+
+    List<Booking> getBookingByMailSendDate(LocalDate date);
 }
