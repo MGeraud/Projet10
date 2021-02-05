@@ -17,6 +17,10 @@ public class BatchSerciceImpl implements BatchService{
         return loanDao.findAllByBookBackDateIsNullAndStartingDateLessThanAndRefreshEndingCounterEquals(date, refresh);
     }
 
+    /**
+     *
+     * @return liste des emprunts retournés ce jour
+     */
     @Override
     public List<Loan> getLoansBackToday() {
         return loanDao.findByBookBackDate(LocalDate.now());
