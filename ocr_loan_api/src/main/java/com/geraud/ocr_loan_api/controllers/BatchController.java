@@ -1,5 +1,6 @@
 package com.geraud.ocr_loan_api.controllers;
 
+import com.geraud.ocr_loan_api.domain.Booking;
 import com.geraud.ocr_loan_api.domain.Loan;
 import com.geraud.ocr_loan_api.services.BatchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,19 @@ public class BatchController {
      * obtention de la liste des livres ramenés ce jour
      * @return la liste des livres dont la date de retour est aujourd'hui
      */
+    @GetMapping("/batch/loans/backtoday")
     public ResponseEntity<List<Loan>> batchLoansBackToday(){
         return new ResponseEntity<>(batchService.getLoansBackToday() , HttpStatus.OK);
     }
+
+    /**
+     * obtention de la liste des réservations d'un titre pour lesquels aucun mail n'a été envoyé
+     * @param title titre du livre
+     * @return liste de réservations
+     */
+    @GetMapping("/batch/bookings/title")
+    public ResponseEntity<List<Booking>> bookingsByTitleAndMailSendDateNull(@RequestParam("title") String title){
+        return new ResponseEntity<>(batchService.getBookingByTitleAndMailSendDateIsNull(title) , HttpStatus.OK);
+    }
+
 }

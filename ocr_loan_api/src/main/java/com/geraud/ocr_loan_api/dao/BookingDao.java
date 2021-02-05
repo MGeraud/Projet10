@@ -9,4 +9,6 @@ public interface BookingDao extends JpaRepository<Booking , Long> {
 
     List<Booking> findByMember_EmailAndMember_Cardnumber(String email , String cardmember);
     List<Booking> findByTitleOrderByBookingDate(String title);
+
+    List<Booking> findByTitleAndMailSendDateIsNullOrderByBookingDate(String title);
 }
