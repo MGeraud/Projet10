@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -40,7 +42,8 @@ public class BatchController {
      * @return liste de réservations
      */
     @GetMapping("/batch/bookings/title")
-    public ResponseEntity<List<Booking>> bookingsByTitleAndMailSendDateNull(@RequestParam("title") String title){
+    public ResponseEntity<List<Booking>> bookingsByTitleAndMailSendDateNull(@RequestParam("title") String title) throws UnsupportedEncodingException {
+        String titleToUtf = URLDecoder.decode(title , "utf-8");
         return new ResponseEntity<>(batchService.getBookingByTitleAndMailSendDateIsNull(title) , HttpStatus.OK);
     }
 
@@ -50,9 +53,9 @@ public class BatchController {
      * @return liste des réservations
      */
     @GetMapping("/batch/booking/maildate")
-    public ResponseEntity<List<Booking>> bookingsByMailSendDate(@RequestParam("date") LocalDate date)
+    public ResponseEntity<List<Booking>> bookingsByMailSendDate(@RequestParam("date") String date)
     {
-        return new ResponseEntity<>(batchService.getBookingByMailSendDate(date) , HttpStatus.OK);
+        return new ResponseEntity<>(batchService.getBookingByMailSendDate(LocalDate.parse(date)) , HttpStatus.OK);
     }
 
 }
