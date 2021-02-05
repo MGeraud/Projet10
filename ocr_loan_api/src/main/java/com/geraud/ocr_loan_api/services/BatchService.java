@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BatchService {
     List<Loan> findTitleAndEmail(LocalDate date , int refresh);
+
+    List<Loan> getLoansBackToday();
 }

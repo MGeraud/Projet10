@@ -23,4 +23,12 @@ public class BatchController {
                                                   @RequestParam("refresh") int refresh){
         return new ResponseEntity<>(batchService.findTitleAndEmail(LocalDate.parse(date), refresh), HttpStatus.OK);
     }
+
+    /**
+     * obtention de la liste des livres ramenés ce jour
+     * @return la liste des livres dont la date de retour est aujourd'hui
+     */
+    public ResponseEntity<List<Loan>> batchLoansBackToday(){
+        return new ResponseEntity<>(batchService.getLoansBackToday() , HttpStatus.OK);
+    }
 }
