@@ -73,11 +73,11 @@ public class BookingServiceImpl implements BookingService{
 
     /**
      * annote la date d'envoi de mail
-     * @param id de la réservation pour laquelle le mailest envoyé
+     * @param id de la réservation pour laquelle le mail est envoyé
      * @return la réservation modifiée
      */
     @Override
-    public Booking patchBooking(Long id) {
+    public Booking patchBooking(Long id, Booking booking) {
         Optional<Booking> optionalToUpdate = bookingDao.findById(id);
         if (!optionalToUpdate.isPresent()){
             throw new LoanNotFoundException("Réservation non trouvée avec l'id : " + id);

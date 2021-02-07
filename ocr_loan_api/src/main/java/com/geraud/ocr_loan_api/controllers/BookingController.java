@@ -55,8 +55,8 @@ public class BookingController {
         return new ResponseEntity<Member>(bookingService.deleteBooking(id) , HttpStatus.OK);
     }
 
-    @GetMapping("/booking/{id}/emailing")
-    public ResponseEntity<Booking> patchBooking(@PathVariable Long id){
-        return new ResponseEntity<Booking>(bookingService.patchBooking(id) , HttpStatus.OK);
-    }
+//    @GetMapping("/booking/{id}/emailing")
+//    public ResponseEntity<Booking> patchBooking(@PathVariable Long id){
+//        return new ResponseEntity<Booking>(bookingService.patchBooking(id) , HttpStatus.OK);
+//    }
 }

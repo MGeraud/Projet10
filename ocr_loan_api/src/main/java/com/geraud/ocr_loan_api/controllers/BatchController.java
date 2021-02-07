@@ -2,13 +2,13 @@ package com.geraud.ocr_loan_api.controllers;
 
 import com.geraud.ocr_loan_api.domain.Booking;
 import com.geraud.ocr_loan_api.domain.Loan;
+import com.geraud.ocr_loan_api.domain.Member;
 import com.geraud.ocr_loan_api.services.BatchService;
+import com.geraud.ocr_loan_api.services.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -19,6 +19,8 @@ import java.util.List;
 public class BatchController {
     @Autowired
     BatchService batchService;
+    @Autowired
+    BookingService bookingService;
 
     /* Envoi de la liste des prêts échus en fonction d'une date et d'un nombre de prolongation */
     @GetMapping("/batch")
@@ -44,7 +46,7 @@ public class BatchController {
     @GetMapping("/batch/bookings/title")
     public ResponseEntity<List<Booking>> bookingsByTitleAndMailSendDateNull(@RequestParam("title") String title) throws UnsupportedEncodingException {
         String titleToUtf = URLDecoder.decode(title , "utf-8");
-        return new ResponseEntity<>(batchService.getBookingByTitleAndMailSendDateIsNull(title) , HttpStatus.OK);
+        return new ResponseEntity<>(batchService.getBookingByTitleAndMailSendDateIsNull(titleToUtf) , HttpStatus.OK);
     }
 
     /**
@@ -56,6 +58,21 @@ public class BatchController {
     public ResponseEntity<List<Booking>> bookingsByMailSendDate(@RequestParam("date") String date)
     {
         return new ResponseEntity<>(batchService.getBookingByMailSendDate(LocalDate.parse(date)) , HttpStatus.OK);
+    }
+
+    @PatchMapping("/batch/booking/{id}")
+    public ResponseEntity<Booking> patchBooking(@PathVariable Long id , @RequestBody Booking booking){
+        return new ResponseEntity<Booking>(bookingService.patchBooking(id,booking) , HttpStatus.OK);
+    }
+
+    /**
+     * effacement d'une réservation
+     * @param id de la réservation à annuler
+     * @return
+     */
+    @DeleteMapping("/batch/booking/{id}")
+    public ResponseEntity<Member> deleteBooking(@PathVariable Long id){
+        return new ResponseEntity<Member>(bookingService.deleteBooking(id) , HttpStatus.OK);
     }
 
 }

@@ -15,5 +15,5 @@ public interface BookingService {
 
     Member deleteBooking(Long id);
 
-    Booking patchBooking(Long id);
+    Booking patchBooking(Long id, Booking booking);
 }
