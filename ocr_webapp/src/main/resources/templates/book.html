@@ -11,10 +11,10 @@
 
 <!-- image à gauche sur écran tablette et + -->
 <div class="container float-md-left col-md-3 text-center">
-    <img class=" my-2" src="#" th:src="@{${book.getImage()}}">
+    <img class=" my-2 mx-2 " src="#" th:src="@{${book.getImage()}}">
 </div>
 <!-- Détails à droite sur écrans tablette et +-->
-<div class="container float-md-right col-md-9">
+<div class="container float-md-right col-md-8">
     <div class="m-md-3">
         <p>
         <h1 th:text="${book.getTitle()}">titre</h1>
@@ -22,8 +22,8 @@
         <p>
             <span class=" text-primary" th:text="'Auteur(s) : '"> auteur</span>
             <span class="col-3" th:each="author : ${book.getAuthors()}">
-        <span th:text="${author.getFirstname()} + ' ' + ${author.getLastname()}">nom</span>
-    </span>
+                <span th:text="${author.getFirstname()} + ' ' + ${author.getLastname()}">nom</span>
+            </span>
         </p>
         <p class="row">
         <span class="col">
@@ -35,35 +35,79 @@
             <span th:text="${book.getYear()}"> an</span>
         </span>
         </p>
+        <p class="row">
+        <div th:if="${booking != null}">
+            <div th:if="${(2 * book.getStocks().size()) >= booking.getNumberOfBooking()}">
+                <p class="text-warning" th:text="'Il existe déjà ' + ${booking.getNumberOfBooking()} +' réservations pour ce livre et la date de retour la plus proche est estimée au '
+                               + ${#temporals.format(booking.getGuessedBookBackDate() , 'dd-MM-yyyy')} + '.' ">texte réservations</p>
+                <div>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#formForBooking">
+                        Réserver ce livre
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="formForBooking" tabindex="-1" role="dialog" aria-labelledby="Identifiants" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="Identifiants">Confirmez vos identifiant pour réserver le titre</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-group mx-5  " action="#" th:action="@{/booking/createBooking/{title}(title=${book.getTitle()})}" th:object="${identifiants}" method="post">
+                                        <label class="col-form-label mx-md-3 my-1" th:text=" Email"></label>
+                                        <input class="form-control mx-md-3 my-1" type="text" th:field="*{email}"/>
+                                        <label class="col-form-label mx-md-3 my-1" th:text="' Carte n° : '"></label>
+                                        <input class="form-control mx-md-3 my-1" type="text" th:field="*{cardnumber}"/>
+                                        <input class="btn btn-info mx-md-3 my-2" type="submit" value="Envoyer">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-warning" th:unless="${(2 * book.getStocks().size()) >=  booking.getNumberOfBooking()}"
+                  th:text="'Le nombre de réservations pour ce livre est actuellement trop élevé. Veuillez réesayer plus tard.'" >
+                    Exces réservations
+            </p>
+        </div>
+        </p>
     </div>
     <!-- Carte pour chacun des exemplaire du livre : où le trouver et disponibilité -->
     <div class="card-deck">
-    <div  th:each="label : ${book.getStocks()}">
-        <div class="card border-success my-2">
-            <div class="card-header">
-                <div class="card-title text-primary" th:text="'Bibliothèque : ' + ${label.getPk().getLibrary().getLibrary_name()}">Bibliotheque</div>
-                <p th:text="${label.getPk().getLibrary().getAddress()}">adresse</p>
-                <p th:text="'Horaires du lundi au vendredi :'">heures ouvertures</p>
-                <p th:text="${label.getPk().getLibrary().getOpening_hours()}">xx-xx</p>
-            </div>
-            <div class="card-body">
-                <span class="title text-primary" th:text="'Où me chercher : '">lieu </span><br/>
-                <span th:text="'Allée : ' + ${label.getWings()}">allée</span><br/>
-                <span th:text="'Colonne : ' + ${label.getPillar()}">colonne</span><br/>
-                <span th:text="'Etagère : ' + ${label.getShelf()}">etagere</span><br/>
-                <span th:text="'Référence : ' + ${label.getLabel()}">reference</span><br/>
-            </div>
-            <div class="card-footer">
-                <p class="title text-primary" th:text="'Disponbilité : '">Dispo ?</p>
-                <p th:each="dispo : ${available}">
+        <div th:each="label : ${book.getStocks()}">
+            <div class="card border-success my-2">
+                <div class="card-header">
+                    <div class="card-title text-primary"
+                         th:text="'Bibliothèque : ' + ${label.getPk().getLibrary().getLibrary_name()}">Bibliotheque
+                    </div>
+                    <p th:text="${label.getPk().getLibrary().getAddress()}">adresse</p>
+                    <p th:text="'Horaires du lundi au vendredi :'">heures ouvertures</p>
+                    <p th:text="${label.getPk().getLibrary().getOpening_hours()}">xx-xx</p>
+                </div>
+                <div class="card-body">
+                    <span class="title text-primary" th:text="'Où me chercher : '">lieu </span><br/>
+                    <span th:text="'Allée : ' + ${label.getWings()}">allée</span><br/>
+                    <span th:text="'Colonne : ' + ${label.getPillar()}">colonne</span><br/>
+                    <span th:text="'Etagère : ' + ${label.getShelf()}">etagere</span><br/>
+                    <span th:text="'Référence : ' + ${label.getLabel()}">reference</span><br/>
+                </div>
+                <div class="card-footer">
+                    <p class="title text-primary" th:text="'Disponbilité : '">Dispo ?</p>
+                    <p th:each="dispo : ${available}">
                 <span th:if="${label.getLabel().equals(dispo.getKey()) }">
                     <span class="alert-success" th:if="${dispo.getValue().equals('true')}"> Exemplaire disponible</span>
-                    <span class="alert-danger" th:unless="${dispo.getValue().equals('true')}">Exemplaire non disponible</span>
+                    <span class="alert-danger"
+                          th:unless="${dispo.getValue().equals('true')}">Exemplaire non disponible</span>
                 </span>
-                </p>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 </div>
 

@@ -11,7 +11,44 @@
 
 <div class="container container-fluid mt-3">
 
+    <!-- Table de présentation des réservations -->
+    <div th:if="${myBookings} != null">
+        <div class="container col my-2">
+            <h2 class="text-primary text-center my-4">Vos réservations en cours</h2>
+
+            <table class="table table-striped alert-primary">
+                <thead>
+                <tr>
+                    <th>Date de réservation</th>
+                    <th>Titre du livre</th>
+                    <th>Date de retour prévue</th>
+                    <th>Votre position en file d'attente</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="booking : ${myBookings}" >
+
+                    <td th:text="${#temporals.format(booking.getBooking().getBookingDate(), 'dd-MM-yyyy')}">date de réservation</td>
+                    <td th:text="${booking.getBooking().getTitle()}">Titre emprunté</td>
+                    <td th:text="${#temporals.format(booking.getGuessedBookBackDate(), 'dd-MM-yyyy')}">date retour probable</td>
+                    <td th:text="${booking.getQueuePosition()}">position en file attente</td>
+                    <td>
+                        <button type="button" class="btn btn-danger">
+                            <a class="text-white" href="#" th:href="@{'/booking/' + ${booking.getBooking().getId()}+ '/delete'}">Annuler la réservation </a>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- les Emprunts -->
     <div th:if="${myLoans} != null">
+        <!-- Table de prśentation des emprunts en cours -->
         <div class="container col my-2">
             <h2 class="text-primary text-center my-4">Vos emprunts en cours</h2>
 
@@ -31,11 +68,16 @@
                     <td th:text="${loan.getTitle()}">Titre emprunté</td>
                     <td>
                         <span th:if="${loan.getRefreshEndingCounter()== 0 && loan.getBookBackDate()== null}">
-                            <button class="btn btn-primary">
-                                <a class="text-white" href="#" th:href="@{'/loan/' + ${loan.getId()} + '/extend'}">Prolonger </a>
-                            </button>
+                            <span th:if="${loan.getStartingDate().plusWeeks(4) > #temporals.createToday()}">
+                                <button class="btn btn-primary">
+                                    <a class="text-white" href="#" th:href="@{'/loan/' + ${loan.getId()} + '/extend'}">Prolonger </a>
+                                </button>
+                            </span>
+                            <span class="text-danger" th:unless="${loan.getStartingDate().plusWeeks(4) > #temporals.createToday()}"> Délai dépassé - Veuillez nous ramener le livre</span>
                         </span>
-                        <span class="text-danger" th:if="${loan.getRefreshEndingCounter() > 0 && loan.getBookBackDate()== null}" th:text="'Emprunt prolongé'">
+                        <span class="test-primary"
+                              th:if="${loan.getRefreshEndingCounter() > 0 && loan.getBookBackDate()== null}"
+                              th:text="'Emprunt prolongé'">
                             Emprunt prolongé
                         </span>
                     </td>
@@ -43,6 +85,7 @@
                 </tbody>
             </table>
         </div>
+        <!-- Table de présentation des emprunts rendus -->
         <div class="container col">
             <h2 class="text-primary text-center my-4">Historique de vos emprunts rendus</h2>
 

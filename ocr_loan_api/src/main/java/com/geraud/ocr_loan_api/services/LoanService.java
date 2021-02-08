@@ -10,4 +10,11 @@ public interface LoanService {
     Loan createLoan(String cardnumber, Loan loan);
     List<Loan> listLoans(String email, String cardnumber);
     boolean labelAvailable(String label);
+
+    /**
+     * Liste des emprunts dont le titre est passé enparametre
+     * @param title titre du livre emprunté
+     * @return liste des emprunts avec ce titre
+     */
+    List<Loan> listLoansByTitle(String title);
 }

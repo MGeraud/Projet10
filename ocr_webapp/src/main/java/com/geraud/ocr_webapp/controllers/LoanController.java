@@ -1,27 +1,32 @@
 package com.geraud.ocr_webapp.controllers;
 
+import com.geraud.ocr_webapp.exception.FunctionnalException;
+import com.geraud.ocr_webapp.exception.NotAllowedBookingException;
+import com.geraud.ocr_webapp.model.BookedTitle;
 import com.geraud.ocr_webapp.model.Loan;
+import com.geraud.ocr_webapp.model.Member;
+import com.geraud.ocr_webapp.service.BookedTitleCreation;
+import com.geraud.ocr_webapp.service.CallLoanApi;
 import com.geraud.ocr_webapp.utils.Login;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.List;
 
 @Controller
 @Slf4j
 public class LoanController {
 
-    @Value("${base.url.loan}")
-    private String loanUrl;
     @Autowired
-    RestTemplate restTemplate;
+    CallLoanApi callLoanApi;
+    @Autowired
+    BookedTitleCreation bookedTitleCreation;
 
     /**
      * Liste les livres empruntés
@@ -32,17 +37,11 @@ public class LoanController {
     @RequestMapping("/myLoans")
     public String listLoanFromMember(@ModelAttribute("identifiants")Login login,
                                      Model model){
-
-        //création de l'url à appeler à partir des critères de recherche récupérés (email et carte membre)
-        String url = UriComponentsBuilder.fromHttpUrl(loanUrl)
-                .queryParam("email" , login.getEmail())
-                .queryParam("cardnumber", login.getCardnumber())
-                .toUriString();
         try {
-            // appel l'API gérant les emprunts puis récupération des livres emprunté sous forme de tableau
-            ResponseEntity<Loan[]> response = restTemplate.getForEntity(url, Loan[].class);
-            Loan[] myLoans = response.getBody();
+            Loan[] myLoans = callLoanApi.getLoanbyMember(login);
+            List<BookedTitle> bookedTitle = bookedTitleCreation.createBookedTitles(login);
 
+            model.addAttribute("myBookings" , bookedTitle);
             model.addAttribute("myLoans", myLoans);
         }catch (Exception e){
             log.error("Erreur serveur : " + e.getMessage());
@@ -60,21 +59,10 @@ public class LoanController {
     @RequestMapping("/loan/{id}/extend")
     public String extendLoan(@PathVariable(value = "id") Long id ,
                              RedirectAttributes redirectAttributes){
-        //Création d'un loan temporaire qui sera envoyé à l'API gérant les emprunts en ne précisant que son id et l'incrémentation du compteur de prolongation
-        Loan loan = new Loan();
-        loan.setId(id);
-        loan.setRefreshEndingCounter(1);
 
-        //Utilisation de la factory client request d'Apache pour prise en compte du verbe http PATCH avec restTemplate
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        restTemplate.setRequestFactory(requestFactory);
-
-        //création de l'url à appeler à partir de l'Id de l'emprunt à modifier
-        String url = UriComponentsBuilder.fromHttpUrl(loanUrl + loan.getId())
-                .toUriString();
         try {
-            //envoi de la requête et récupération de l'emprunt modifié
-            Loan patchedLoan = restTemplate.patchForObject(url, loan, Loan.class);
+            Loan patchedLoan = callLoanApi.patchLoan(id);
+
             //attribution des identifiants de l'emprunt modifié pour envoyer directement au @ModelAttribute de la méthode du controller de l'historique des emprunts
             Login login = new Login();
             login.setCardnumber(patchedLoan.getMember().getCardnumber());
@@ -86,5 +74,44 @@ public class LoanController {
         }
         //redirection vers l'historique des emprunts
        return "redirect:/myLoans";
+    }
+
+    /**
+     * controller permetant d'annuler une réservation
+     * @param id de la réservation à annuler
+     * @param redirectAttributes récupération de l'identité du membre annulant une réservation pour le rediriger vers sa page de profil
+     * @return page des emprunts et réservation du membre en cas de succès , sinon redirection vers la page d'erreur
+     */
+    @RequestMapping("/booking/{id}/delete")
+    public String deleteBooking(@PathVariable(value = "id") Long id,
+                                RedirectAttributes redirectAttributes){
+        try {
+            Member member = callLoanApi.deleteBooking(id);
+            Login login = new Login();
+            login.setCardnumber(member.getCardnumber());
+            login.setEmail(member.getEmail());
+            redirectAttributes.addFlashAttribute("identifiants", login);
+
+        } catch (Exception e){
+            log.error("erreur serveur " + e.getMessage());
+            return "redirect:/errorPage";
+        }
+        return "redirect:/myLoans";
+    }
+
+    @RequestMapping("/booking/createBooking/{title}")
+    public String createBooking (@ModelAttribute("identifiants") Login login, @PathVariable(value = "title") String title,
+                                 RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
+        redirectAttributes.addFlashAttribute("identifiants" , login);
+        String titleToUtf8 = URLDecoder.decode(title , "utf-8");
+        try{
+            callLoanApi.createBooking(titleToUtf8 , login);
+        }catch (FunctionnalException e) {
+            log.error("erreur création réservation" + e);
+            return "redirect:/errorPage";
+        }catch (NotAllowedBookingException e){
+            return "redirect:/alreadyBooked";
+        }
+        return "redirect:/myLoans";
     }
 }

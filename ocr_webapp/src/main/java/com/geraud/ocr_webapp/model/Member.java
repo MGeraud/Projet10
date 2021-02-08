@@ -15,5 +15,6 @@ public class Member {
     private String cardnumber;
 
     private Set<Loan> loans =new HashSet<>();
+    private Set<Booking> bookingSet =new HashSet<>();
 
 }

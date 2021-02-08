@@ -22,4 +22,7 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private Set<Loan> loans = new HashSet<>();
 
+    @OneToMany(mappedBy = "member")
+    private Set<Booking> bookingSet = new HashSet<>();
+
 }
