@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.geraud</groupId>
     <artifactId>expired-loan-batch</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
     <name>expired-loan-batch</name>
     <description>batch to send email to members with expired loan</description>
 

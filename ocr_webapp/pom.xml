@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.geraud</groupId>
     <artifactId>ocr_webapp</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
     <name>ocr_webapp</name>
     <description>Application web pour les utilisateurs de la bibliothèque d'ocr</description>
 
