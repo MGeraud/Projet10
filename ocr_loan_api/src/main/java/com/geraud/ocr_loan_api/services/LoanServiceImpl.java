@@ -26,7 +26,7 @@ public class LoanServiceImpl implements LoanService{
 
         // recherche du prêt à partir de son id, si non trouvé renvoi erreur
         Optional<Loan> foundLoan = loanDao.findById(id);
-        if (!foundLoan.isPresent()){
+        if (foundLoan.isEmpty()){
             throw new LoanNotFoundException("Prêt non trouvé avec l'id : " + id);
         }
         //création du prêt à modifier

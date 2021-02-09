@@ -79,7 +79,7 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public Booking patchBooking(Long id, Booking booking) {
         Optional<Booking> optionalToUpdate = bookingDao.findById(id);
-        if (!optionalToUpdate.isPresent()){
+        if (optionalToUpdate.isEmpty()){
             throw new LoanNotFoundException("Réservation non trouvée avec l'id : " + id);
         }
         Booking bookingToUpdate = optionalToUpdate.get();
