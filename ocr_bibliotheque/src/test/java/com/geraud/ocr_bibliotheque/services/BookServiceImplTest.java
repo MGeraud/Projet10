@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -89,5 +88,6 @@ class BookServiceImplTest {
         assertEquals(1 , bookServiceImpl.findByTitle("ddd" , PageRequest.of(2 , 3)).getTotalElements());
         assertEquals("Book 1" , bookServiceImpl.findByTitle("fff" , PageRequest.of(1,2)).get().findFirst().get().getTitle());
     }
+
 
 }
