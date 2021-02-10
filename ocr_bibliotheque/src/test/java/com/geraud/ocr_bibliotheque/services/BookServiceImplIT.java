@@ -12,8 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -58,5 +57,27 @@ public class BookServiceImplIT {
         assertEquals(1 , bookPage.getTotalPages());
     }
 
+    @Test
+    void findByAuthorWithFirstAndLastName(){
+        Pageable pageable =  PageRequest.of(0 , 5);
+        bookPage = bookService.findByAuthor("JRR Tolkien" , pageable);
+        assertTrue(bookPage.getTotalElements() > 0);
+        assertTrue(bookPage.get().findFirst().get().getTitle().contains("anneaux"));
+    }
 
+    @Test
+    void findByAuthorWithLastNameOnly(){
+        Pageable pageable =  PageRequest.of(0 , 5);
+        bookPage = bookService.findByAuthor("tolkien" , pageable);
+        assertTrue(bookPage.getTotalElements() > 0);
+        assertTrue(bookPage.get().findFirst().get().getTitle().contains("anneaux"));
+    }
+
+    @Test
+    void findByTopicOnlyOneTopic(){
+        Pageable pageable =  PageRequest.of(0 , 5);
+        bookPage = bookService.findByTopic("fantastique" , pageable);
+        assertFalse(bookPage.getContent().isEmpty());
+        assertEquals(6 , bookPage.getTotalElements());
+    }
 }
