@@ -1,8 +1,6 @@
 package com.geraud.ocr_bibliotheque.services;
 
-import com.geraud.ocr_bibliotheque.dao.AuthorDao;
 import com.geraud.ocr_bibliotheque.dao.BookDao;
-import com.geraud.ocr_bibliotheque.domain.Author;
 import com.geraud.ocr_bibliotheque.domain.Book;
 import com.geraud.ocr_bibliotheque.exceptions.ResultNotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -11,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,23 +16,20 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 class BookServiceImplTest {
 
     private Book book1;
-    private Author author1;
+
 
     @Mock
     private BookDao bookDaoMock;
-    @Mock
-    private AuthorDao authorDao;
+
 
     @InjectMocks
     private BookServiceImpl bookServiceImpl;
@@ -46,11 +40,7 @@ class BookServiceImplTest {
         book1 = new Book();
         book1.setIsbn("3456");
         book1.setTitle("Book 1");
-        author1 = new Author();
-        author1.setFirstname("Paul");
-        author1.setLastname("Robinson");
-        author1.setBooks(Set.of(book1));
-        book1.setAuthors(Set.of(author1));
+
     }
 
     /**
