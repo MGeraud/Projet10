@@ -110,11 +110,6 @@ public class BookingServiceImpTest {
     private BookingDao createBookingDao() {
         BookingDao mock = mock(BookingDao.class);
         when(mock.findByTitleOrderByBookingDate(anyString())).thenReturn(Collections.emptyList());
-//        when(bookingDao.findByTitleOrderByBookingDate(booking.getTitle())).thenReturn(List.of(booking));
-//        when(bookingDao.findById(1L)).thenReturn(Optional.of(booking));
-//        when(bookingDao.findById(2L)).thenReturn(Optional.empty());
         return mock;
     }
-
-
 }
