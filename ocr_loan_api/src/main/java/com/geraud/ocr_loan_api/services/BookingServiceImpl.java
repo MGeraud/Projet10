@@ -5,7 +5,6 @@ import com.geraud.ocr_loan_api.domain.Booking;
 import com.geraud.ocr_loan_api.domain.Member;
 import com.geraud.ocr_loan_api.exceptions.FunctionnalException;
 import com.geraud.ocr_loan_api.exceptions.LoanNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,11 +16,12 @@ public class BookingServiceImpl implements BookingService{
 
     private final BookingDao bookingDao;
 
-    @Autowired
-    MemberService memberService;
 
-    public BookingServiceImpl(BookingDao bookingDao) {
+    private final MemberService memberService;
+
+    public BookingServiceImpl(BookingDao bookingDao, MemberService memberService) {
         this.bookingDao = bookingDao;
+        this.memberService = memberService;
     }
 
     /**
