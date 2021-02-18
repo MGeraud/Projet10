@@ -74,8 +74,8 @@ public class RunJob {
     }
 
     //Pour tester déclenchement à changer en fonction de l'heure actuelle
-    //@Scheduled(cron = "10 19 * * * *")
-    @Scheduled(cron = "* * 20 * * *")
+    @Scheduled(cron = "10 17 * * * *")
+    //@Scheduled(cron = "* * 20 * * *")
     public void dailyBookingsManagement() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
         List<Loan> loans = callLoanApi.getLoansBackToday();
         List<Booking> bookings = callLoanApi.getBookingsByMailSendDate(LocalDate.now().minusDays(2));
