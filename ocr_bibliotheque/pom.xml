@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.geraud</groupId>
     <artifactId>ocr_bibliotheque</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
     <name>ocr_bibliotheque</name>
     <description>Projet 7 - Parcours DA JAVA d'OpenClassRooms</description>
 
